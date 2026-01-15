@@ -1,0 +1,1324 @@
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+Data extraction for:
+
+		## HOW LARGE COOPERATIVE BIRD GROUPS AVOID LOCAL COMPETITION ##
+
+In Handbook of Meta-analysis in Ecology and Evolution: see
+p. 66 for converting Pearson's r to Fisher's r (to normalise)
+p. 201 for conversions between Spearman rank correlation and Pearson's r
+
+Use Image J to extract data from Figures.
+Take screen shot of Figure and save in a file.
+In imageJ:
+- choose line tool
+- measure scale bar
+- analyse / set scale
+- enter known distance and units, select global
+- choose polygon tool and highlight area
+- analyse / measure
+
+Use WebPlotDigitizer https://automeris.io/wpd/
+Note had to create an account
+- load image
+- chose plot type
+- calibrate
+- select points
+- click view data
+- download csv
+
+From Handbook of Meta in Ecol Evol and Viechtebauer (https://github.com/easystats/effectsize/issues/534)
+# rpb = d / (sqrt((d^2 + h))); where h <- (m/n1)+(m/n2) and m <- n1 + n2 - 2
+# rpb = sqrt(t^2 / (t^2 + n1 + n2 - 2))
+# rpb = p / sqrt(p^2 +4)
+# rpb = sqrt(F / (F + n1 + n2 - 2))
+# d = (rpb * sqrt(h)) / sqrt(1 - rpb^2)
+# r = sqrt((d^2*n1*n2 ) / (d^2*n1*n2 + (n*(n-1))))
+# r = 2*sin((pi*rs)/6)		# if n < 90
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+								### ACORN WOODPECKER ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Ecological correlates of social organization in a communally breeding bird, the acorn woodpecker, Melanerpes formicivorus
+Authors: Trail, P.W.
+Journal: Behavioral Ecology and Sociobiology
+Year: 1980
+Study location: Cave Creek Basin, Chiricahua Mountains, Arizona, USA
+Study duration: 1976, 1977
+
+Data from: Table 1 has raw data
+Manually extracted and saved here: data/raw/trail.csv
+
+## in R ##
+data <- read.csv("Desktop/bird_projects/BLC/data/raw/Trail.csv")
+head(data)
+dim(data)	# 20 rows by 9 columns
+# use defended area and pool years
+plot(adults ~ defended_area, data)
+cor.test(data$adults, data$defended_area, method="spearman")		# rs = -0.01
+2*sin((pi*-0.01)/6)										# rp = -0.01
+0.5*log((1 + -0.01)/(1 - -0.01))								# zr = -0.01
+1/(20-3)													# var = 0.059
+
+Independent groups: yes “different groups were studied in the two years”
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: yes "The centers [defended areas], on the other hand, cannot increase in size without vigorous conflict with adjacent groups."
+
+Notes:
+- used number of adults as group size measure rather than total members
+- research carried out in the breeding season (June - August / September)
+- defended area varied from 1.2 to 9.4 ha, mean = 3.2 ha (Table 1)
+- group size range = 2 - 5 ("Unit size varied from two to five adults")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+								### ARROW MARKED BABBLER ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Aspects of the breeding biology of the arrow marked babbler Turdoides jardineii in South Africa
+Authors: Monadjem, A and Owen-Smith, N and Kemo, AC
+Journal: IBIS
+Year: 1995
+Study location: Mosdene farm, central Transvaal
+Study duration: 1992 to 1993 (one breeding season)
+
+Data from: Spearman's r reported in the results
+“Group size was positively correlated with territory size (rs= 0.56, n = 14, P < 0.05)”
+2*sin((pi*0.56)/6)					# rp = 0.58
+0.5*log((1 + 0.58)/(1 - 0.58))		# zr = 0.66
+1/(14-3)							# var = 0.091
+N = 18 breeding groups, but 14 territories measured
+
+Independent groups: yes, one breeding season therefore groups not analysed multiple times
+
+Within-group changes:
+“Territory boundaries were stable over the 8 month study period, even though some groups had more than doubled in size” BUT this is juveniles via recruitment
+
+Territorial disputes: yes "Extra adults... they helped in the defence and enlargement of a territory in a saturated habitat." and "territory boundaries were defended by all members of a group. Group members, on detection of a neighbouring group, would take up position on the highest branches of a tree and call continuously. A group that had crossed the boundary into the neighbouring territory would quickly retreat to its own territory, while being pursued by the other group."
+
+Notes:
+- The size of each group was recorded at least once every 4 weeks and reported for October and March, so overall group size may include new recruits from breeding BUT assume it’s number of adults since ‘group size’ is then correlated with breeding success
+- from abstract, study took place during the breeding season
+- territory size mean = 37 ha; range = 10.5 ha to 63.5 ha
+- group size range = 3 - 9 (Figure 2)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+								### AUSTRALIAN MAPGIE ###
+
+## one study with data on territory area and group size from three populations ##
+
+Title: Differences in social behaviour between populations of the Australian Magpie Gymnorhina tibicen
+Authors: Hughes, JM and Hesp, JDE and Kallioinen, R and Kempster, M and Lange, CL and Hedstrom, KE and Mather, PB and Robinson, A and Wellbourn, MJ
+Journal: EMU
+Year: 1996
+Study locations:
+- Moggill Farm, Kenmore, Queensland, Australia
+- near Seymour, northern Victoria, Australia
+Study duration:
+- Moggill Farm = 1992 and 1993
+- Seymour = 1993
+
+Data from: Table 1 has Spearman's r for adults / group and territory area
+
+Seymour 1993 rs = 0.64, n = 36
+2*sin((pi*0.64)/6)					# rp = 0.66
+0.5*log((1 + 0.66)/(1 - 0.66))		# zr = 0.79
+1/(36-3)							# var = 0.03
+
+Moggill 1992 rs = 0.41, n = 14
+2*sin((pi*0.41)/6)					# rp = 0.43
+0.5*log((1 + 0.43)/(1 - 0.43))		# zr = 0.46
+1/(14-3)							# var = 0.09
+
+Moggill 1993 rs = 0.27, n = 15
+2*sin((pi*0.27)/6)					# rp = 0.28
+0.5*log((1 + 0.28)/(1 - 0.28))		# zr = 0.29
+1/(15-3)							# var = 0.08
+
+Linton 1989 rs = 0.23, n = 12
+2*sin((pi*0.23)/6)					# rp = 0.24
+0.5*log((1 + 0.24)/(1 - 0.24))		# zr = 0.25
+1/(12-3)							# var = 0.11
+
+Independent groups: yes since two study years (probably on the same groups) reported separately and N pooled for these below
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: yes "In all areas, they defend year-round territories" and "Territory boundaries were identified from observations of territorial disputes between banded birds"
+
+Notes:
+- group size = adults only (Table 1 legend)
+- group sizes measured during the breeding season (Table 1 legend)
+- I’ve included the New Zealand data here (Linton) even though it is a separate publication (Veltman 1989a)
+- weighted mean territory area ((4.21*36) + (7.95*14) + (8.24 * 15) + (5*12)) / (36+14+15+12) = 5.8 ha 
+- group size range = 2 - 15 (Table 3, pooled across species)
+
+
+## Pool Effect Sizes ##
+- weighted mean from Moggill since two years
+- use N = 15 since the same groups likely to have been studied across years
+Moggill 1992 zr = 0.46, n = 14
+Moggill 1993 zr = 0.29, n = 15
+((0.46*14) + (0.29*15)) / (14+15) = 0.37
+- weighted mean effect size of all three populations:
+Seymour 1993 zr = 0.79, n = 36
+Linton 1989 zr = 0.25, n = 12
+((0.37 * 15) + (0.79 * 36) + (0.25*12)) / (15+36+12) = 0.59
+- combine N since different populations 15+36+12 = 36
+var = 1/(63-3) = 0.017
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+								### BLACK TIT ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Cooperative breeding and group territoriality in the black tit
+Authors: Tarboton, WR
+Journal: Ostrich
+Year: 1981
+Study location: Nylsvley Nature Reserve, central Transvaal, South Africa
+Study duration: 1974 to 1976
+
+Data from: r reported in the results
+not sure if Pearson’s or Spearman’s - assume Pearson’s to be conservative
+“the size of the territory correlated with the number of adults in each group while breeding (r = 0,86; p < O.O2)”
+N = 6 I think since only 6/13 territories were completely mapped
+0.5*log((1 + 0.86)/(1 - 0.86))		# zr = 1.29
+1/(6-3)							# var = 0.333
+
+Independent groups: probably since size of each territory only mapped in one breeding season
+
+Within-group changes:
+no detectable change in the boundaries of three territories monitored in > 1 year
+BUT group size doesn’t seem to have changed either
+
+Territorial disputes: yes "Black Tit pairs and groups defended areas against conspecifics throughout the year" and "I identified territorial boundaries by plotting the positions where agonistic interactions occurred between adjacent groups. At least 62 such disputes were observed. Most (75%) were “high intensity” encounters in which chasing, supplanting and physical fighting, in addition to frequent calling, occurred between members of rival groups." and "Each of theses groups engaged, on average, in 0.36 territorial disputes per hour"
+
+Notes:
+- group size = number of adults while breeding (see above)
+- “The approximate positions of 13 territories in the 1975/76 breeding season are shown in Fig. 1; only the six central territories were completely mapped”
+- territory size mean = 32 ha, range = 25 - 48 ha
+- group size range = 2 - 5 (Table 2)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### CHESTNUT-CROWNED BABBLER ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: The price of associating with breeders in the cooperatively breeding chestnut-crowned babbler: foraging constraints, survival and sociality
+Authors: Sorato, Enrico and Griffith, Simon C. and Russell, Andy F.
+Journal: Journal of Animal Ecology
+Year: 2016
+Study location: Fowlers Gap, NSW, Australia
+Study duration: 2007-2010, 2012
+
+Data from: raw data in supp info - downloaded file called HRs breeding vs nonbreeding.csv and saved as ‘data/raw/Sorato_et_al_Supp_Data.csv’
+
+## in R ##
+data <- read.csv("Desktop/bird_projects/BLC/data/raw/Sorato_et_al_Supp_Data.csv")
+head(data)
+dim(data)	# 32 rows by 11 columns
+# extract breeding season data
+br_data <- data[which(data$breeding == 1),]
+dim(br_data)	# 16 rows, now each group (ID column) is unique
+# breeding
+plot(HR.size ~ N.ADULTS,  br_data)
+cor.test(br_data$HR.size, br_data$N.ADULTS, method="spearman")		# rs = 0.15
+2*sin((pi*0.15)/6)												# rp = 0.16
+0.5*log((1 + 0.16)/(1 - 0.16))									# zr = 0.16
+1/(16-3)														# var = 0.077
+
+Independent groups: yes, since each group appears once in the analysis
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: nothing mentioned
+
+Notes:
+- group size is number of adults (see above)
+- data from breeding season used (see above)
+- mean territory size = 56.6 ha, range = 17.5 to 142.8 ha
+- group size range = 2 - 17 ("Breeding units are socially distinct from one another and number 2–17 adults")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### COMMON BABBLER AND JUNGLE BABBLER ###
+
+## one study with data on territory area and group size for two species ##
+
+Title: Factors affecting the evolution of group territories in babblers (turdoides) and long-tailed tits
+Authors: Gaston, Anthony J.
+Journal: D Phil, Oriel College, University of Oxford
+Year: 1976
+Study location: near New Delhi, India
+Study duration: 1970-1971; 191-1974
+
+
+# Jungle Babbler #
+
+Chapter 2 Territory
+Data from: Figure 2s = mean size of Jungle Babbler groups on March 1 and their core areas
+N = 10 groups
+From the text: rs = 0.73 (i.e. Spearman’s correlation)
+note that this seems to have been added as a correction
+2*sin((pi*0.73)/6)					# rp = 0.75
+0.5*log((1 + 0.75)/(1 - 0.75))		# zr = 0.97
+1/(10-3)							# var = 0.143
+
+Independent groups: yes, since each group appears once in the analysis
+
+Within-group changes: 
+“Both of the above examples suggest that groups expand their territories to accommodate recruitment.”
++ group M decreased in size from 10 to 7 and it’s core area changed from 22 to 8 squares (3.52 ha to 1.28)
++ group L increased in size from 9 to 13 and it’s core area changed from 14 to 15 squares (2.24 ha to 2.4 ha)
+Note that 100 squares = 16.0 ha so 1 square = 0.16 ha and that these changes are from winter to winter
+
+Territorial disputes: yes "Nearly all groups of Jungle Babblers observed in the study showed intolerance towards other groups, resulting in mutually reduced access to certain areas" and "Territorial defence was maintained by vocal and feather posture displays, and occasionally by fighting, and all post-juvenile members of the group regularly took part in these."
+
+Notes:
+- group size measured on March 1st which is the onset of breeding, so should be adults only
+- core areas also seems to have been measured at the onset of breeding
+- mean territory size = 6.1 ha
+- core areas 1.7 ha, range = 0.6 - 3.2 ha
+- group size range = 3 - 12 (from fig 2s)
+- group size range = 2 - 16 ("varied from two to sixteen birds" in Gaston 1978 J Anim Ecol paper)
+
+
+# Common Babbler #
+
+Figure 6b = group size and the area of group territories among Common Babblers in the Ridge study area, February 1973 only.
+r = 0.69 reported in figure (assume Pearson’s), N = 13 
+2*sin((pi*0.69)/6)							# rp = 0.71
+0.5*log((1 + 0.71)/(1 - 0.71))				# zr = 0.89
+1/(13-3)									# var = 0.10
+
+Independent groups: yes, since only one study year so each group analysed once
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: yes, "Contact between groups was very infrequent, and as a result overt territorial defence was rarely observed." and "A few rather untidy encounters were seen in which two groups came into conflict. These were characterised by chases between individual birds and loud vocalisations, but fighting was seen only once."
+
+Notes:
+- group size measured in February which is the onset of breeding (March / April), so should be adults only
+- core areas also seems to have been measured at the onset of breeding
+- only Type I territories included?
+- mean home range size = 3.8 ha, range = 2.4 - 5.6 ha (from fig 6b)
+- group size range = 4 - 14 (from fig 6b)
+- group size range = 2 - 15 (Table 12 in Gaston 1978 Ibis paper)
+
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### CURL-CRESTED JAY ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Breeding patterns and habitat use in the endemic Curl-crested Jay of central Brazil
+Authors: Amaral, MF and Macedo, RHF
+Journal: Journal of Field Ornithology
+Year: 2003
+Study location: Brasilia National Park, Brazil
+Study duration: 1999/2000
+
+Data from: group size and territory size for four groups reported in the results
+x2 measures of territory: home range and reproductive defended areas
+Used defended areas based on this statement “although these jays have ex-tensive home ranges, they also have well defined breeding territories that are much smaller”
+“Group sizes were: group A, 9; group E, 11; group I, 10; and group N, 11 individuals. Mean +/- SD home range was 172 +/- 46 ha. Groups A, E, I, and N used areas of 202 ha (N = 93 waypoints), 211 ha (N = 104), 167 ha(N = 63), and 108 ha (N = 36), respectively.”
+“Groups A, E, I, and N defended reproductive areas from human intruders; reproductive areas consisted of 20 ha (N = 12), 24 ha (N = 18),31 ha (N = 15) and 41 ha (N = 22), respectively, with a mean (+/- SD) of 29 (+/- 8) ha”
+
+## in R ##
+data <- data.frame(group_ID = c("A", "E", "I", "N"),
+		group_size = c(9, 11, 10, 11),
+		home_range = c(202, 211, 167, 108),
+		nest_area = c(20, 24, 31, 41))
+cor.test(data$group_size, data$nest_area, method="spearman")		# rs = 0.63
+2*sin((pi*0.63)/6)											# rp = 0.65
+0.5*log((1 + 0.65)/(1 - 0.65))								# zr = 0.78
+1/(4-3)													# var = 1.00
+
+Independent groups: yes since each group only appears once in each analysis
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: no "we did not observe interactions between neighboring groups"
+
+Notes:
+- “We counted the number of adult individuals each time a group was sighted”
+- During each breeding attempt, estimated area around the nest actively occupied by the group and where individuals vocalized defensively upon sighting human intruders i.e. the nest area is breeding season territory size
+- mean reproductive area = 29 ha, range = 20 - 41 ha
+- group size range = 9 - 11 (see text above)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### GALÁPAGOS MOCKINGBIRD ###
+
+## one study with data on territory area and group size from one population ##
+## data from Curry 1988 excluded as identical to this ##
+
+Title: Galápagos mockingbirds: territorial cooperative breeding in a climatically variable environment
+Authors: Curry, R.L. and Grant, P.R.
+Journal: Cooperative Breeding in Birds (Stacey & Koenig eds), chapter 10
+Year: 1990
+Study location: Genovesa, Galápagos
+Study duration: 1978 to 1988
+
+Data from: Pearson's r reported
+“Territory size increased with the number of adults in each group (F = 69.9, P < 0.005, r = 0.62, n = 116, 1980-4).”
+0.5*log((1 + 0.62)/(1 - 0.62))		# zr = 0.73
+1/(21-3)							# var = 0.056
+
+Independent groups: The analysis above probably pseudo-replicated (N = 116) so used N = 21 for the sampling variance to reflect this, taken from Curry 1988 (minimum value to be conservative)
+
+Within-group changes: the number of territories, their size, and boundaries fluctuated as groups changed in size through mortality and recruitment
+
+Territorial disputes: yes "Territorial residents chase solitary intruders and defend borders of the collective territory throughout frequent display we call flick fights." and "These displays sometimes escalate to actual fights in which birds grapple and peck each other violently."
+
+Notes:
+- group size is number of adults (see above)
+- territories ranged in size (measured during the breeding season) from 0.1 to 3.5 ha and averaged 0.94 ha (n = 142, 1980-5)
+
+Notes: From Curry 1988  Animal Behaviour paper
+- “I examined 21-38 group territories during breeding each year”
+- "Groups included 2-24 adults"
+- group size range = 2 - 12 (Figure 10.5, breeding group size panel)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### GRAY-BACKED FISCAL SHRIKE ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Cooperative breeding in Lanius shrikes I. Habitat and demography of two sympatric species
+Authors: Zack, S and Ligon, JD
+Journal: Auk	
+Year: 1985
+Study location: Morendat Farm, near Lake Naivasha, Kenya
+Study duration: 1979 to 1982
+
+Data from: combine data from Table 1 (territory characteristics) and Fig 1 (group sizes)
+Used group sizes from June since breeding season between June and November (Zack & Ligon 1985b)
+Area of territory (m^2) from Figure 1 using imageJ
+RM = 38567
+NWW = 77382
+RYU = 43498
+BM = 33223
+CW = 46942
+KM = 56363
+MN = 38457
+NYM = 57327
+PYM = 11239
+SK = 72975
+MYN = 41790
+HKK = 33746
+
+## in R ##
+# vegetational data from Table 1 and group sizes from Figure 1
+data <- data.frame(group_ID = c("RM", "NWW", "RYU", "BM", "CW", "KM", "MN", "NYM", "PYM", "SK", "MYN", "HKK"),
+		june_gs = c(5, 8, 6, 7, 4, 6, 7, 5, 2, 9, 8, 6),
+		ran_tree = c(1451.5, 1450.4, 1864.1, 1259.5, 949.2, 901.0, 1346.6, 1348.9, 988.1, 836.7, 641.1, 1919.9),
+		shrub_cover = c(9.24, 10.52, 10.40, 8.71, 3.88, 10.67, 4.27, 9.76, 6.30, 16.00, 22.67, 3.30),
+		tree_cover = c(34.7, 49.3, 28.0, 28.0, 45.3, 52.0, 50.7, 41.3, 46.0, 56.0, 64.0, 10.0),
+		DBH = c(34.4, 42.8, 39.6, 31.8, 24.1, 23.6, 35.0, 35.3, 29.9, 25.6, 16.0, 17.3),
+		area = c(38567, 77382, 43498, 33223, 46942, 56363, 38457, 57327, 11239, 72975, 41790, 33746))
+# area (m^2)
+cor.test(data$june_gs, data$area, method="spearman")	# rs = 0.34
+2*sin((pi*0.34)/6)									# rp = 0.35
+0.5*log((1 + 0.35)/(1 - 0.35))						# zr = 0.37
+1/(12-3)											# var = 0.111
+
+Independent groups: yes since each group appears once in each analysis
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: yes "Both shrike species held exclusive territories against both conspecifics and each other."
+
+Notes:
+- group sizes measured in June 1979 which is the start of breeding so should be adults (see Zack & Ligon 1985b)
+- territory sizes also from June 1979 I think
+- mean territory area = 4.6 ha, range = 1.1 - 7.7 ha (from areas measured in Figure 1)
+- group size range = 2 - 9 ("social units ranging in size from 2 to 9 or more birds")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### GREEN WOODHOOPOE ###
+
+## two studies with data on territory area and group size from two populations ##
+
+Title: Green woodhoopoe Phoeniculus purpureus territories remain stable despite group-size fluctuations
+Authors: Radford, AN and Du Plessis, MA
+Journal: Journal of Avian Biology
+Year: 2004
+Study location: near Morgan’s Bay, South Africa
+Study duration: 1981 to 2002
+
+Data from: Figure 1 has raw data
+Used WebPlotDigitizer to extract data and created x3 .csv files in data/raw
+x3 measures of space usage, I used ‘used area’ since this is what I want to test
+
+## in R ##
+# Fig 1b = used territory ~ group size
+Fig1b <- read.csv("Desktop/bird_projects/BLC/data/raw/Radford_duPlessis_Fig1b.csv")
+Fig1b <- round(Fig1b, 1)
+cor.test(Fig1b$Group_size, Fig1b$used_t, method="spearman")		# rs = 0.19
+2*sin((pi*0.19)/6)											# rp = 0.20
+0.5*log((1 + 0.20)/(1 - 0.20))								# zr = 0.20
+1/(10-3)													# var = 0.14
+N = 62 group years so used min of the range of groups sizes studied each year to be conservative = 10
+
+Independent groups: yes since used N = 10; note it says that each group only included once in each analysis, but unclear if this applies to Figure 1 as N = 62 group years
+
+Within-group changes:
+“when a particular group increased in size between seasons, it increased the percentage of the available territory that was utilised, perhaps because resources were depleted sooner and additional areas were required”
+Fig2b <- read.csv("Desktop/bird_projects/BLC/data/raw/Radford_duPlessis_Fig2b.csv")
+Fig2b <- round(Fig2b, 1)
+
+Territorial disputes: yes "defend well-defined, all-purpose territories throughout the year" and "all birds participated in territorial displays at borders with neighbouring groups" and "territorial disputes were common and sometimes protracted"
+
+Notes:
+- the number of adults in each group was recorded before the start of the breeding season
+- territory size data from 23 groups for three field seasons 1999 to 2002
+- 10 to 31 groups monitored each year
+- mean used territory area = 15.5 ha, range = 9.5 to 22.2 ha
+- mean available territory area = 23.5 ha, range = 12.4 - 35.2 ha
+- group size range = 2 - 9 ("Groups included 2-9 adults")
+
+
+Title: Green woodhoopoes: life history traits and sociality
+Authors: Ligon, J.D. and Ligon, S.H.
+Journal: Cooperative Breeding in Birds (Stacey & Koenig eds), chapter 2
+Year: 1990
+Study location: Morendat Farm, Lake Naivasha, Kenya
+Study duration: 1976 to 1984
+
+Data from: Pearson's r reported in the text
+“Territory size is significantly related to group size, at least for some of the time. In early 1976 the largest territory was 133 ha and contained 15 birds, whereas the smallest, with four woodhoopoes, was 26 ha (r = 0.813), p < 0.01).”
+assume r is Pearson’s to be conservative
+0.5*log((1 + 0.81)/(1 - 0.81))		# zr = 1.13
+1/(13-3)							# var = 0.10
+N: “During the 10 years of this study, four of the 13 original established territories on Morendat Farm disappeared”
+
+Independent groups: yes since used N = 13 for the sampling variance
+
+Within-group changes: Figure 2.3 has data for three groups
+Fig23 <- read.csv("Desktop/bird_projects/BLC/data/raw/Ligon_Ligon_1990.csv")
+xyplot(area ~ group_size | group, Fig23)	# load lattice library
+xyplot(area ~ year | group, Fig23)
+take largest difference between group sizes
+	+ group DD decreased from 15 to 3, home range changed from 118.4 to 22.5 hectares
+	+ group AD increased from 3 to 11, home range changed from 41.7 to 114.0 hectares
+	+ group BRF increased from 5 to 9, home range changed from 61.4 to 84.7 hectares
+
+Territorial disputes: yes "Because the woodhoopoes engage in noisy confrontations with neighboring groups on a daily basis, and because the conspicuous displays occur at territorial boundaries, it is not difficult to measure territory sizes."
+
+Notes:
+- from Figure 2.3 legend, seems as though group size measured in June (onset of breeding), so should be adults
+- group size range = 2 - >9 (Figure 2.4, note very few groups > 9)
+
+
+## Pool Effect Sizes ##
+- Raford & du Plessis Zr = 0.20, N = 10
+- Ligon & Ligon Zr = 1.13, N = 13
+- weighted mean effect size:
+((0.20 * 10) + (1.13 * 13)) / (10+13) = 0.73
+- combine N since different populations 10+13 = 23
+var = 1/(23-3) = 0.05
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### GREY-CROWNED BABBLER ###
+
+## one study with data on territory area and group size from two populations ##
+## note that only data from Mount Flinders available in Table 9 ##
+
+Title: Social organization and behaviour of the grey-crowned babbler pomatostomus temporalis
+Authors: King, B.R.
+Journal: Emu
+Year: 1980
+Study location: Boningar and Mount Flinders, Queensland, Australia
+Study duration: 1970 to 1973
+
+Data from: Table 9 has raw data between home range and group size at three time points
+- note that some values don’t vary across the tree time points
+- note that the times are within the breeding season and the correlation in the table seems to be Pearson’s
+- use July measures since this is the start of the breeding season
+
+## in R ##
+data <- data.frame(group_ID = c("B", "O", "P", "R", "W", "L"),
+					Jan_group_size = c(4, 3, 5, 3, 5, 7),
+					July_group_size = c(4, 3, 5, 4, 5, 7),
+					Oct_group_size = c(5, 3, 5, 4, 5, 7),
+					Jan_home_range = c(12.9, 6.7, 12.3, 21.6, 31.1, 52.7),
+					July_home_range = c(12.9, 6.7, 12.3, 21.6, 31.1, 52.7),
+					Oct_home_range = c(12.9, 5.3, 13.2, 21.6, 31.3, 52.7))
+cor.test(data$July_group_size, data$July_home_range, method="spearman")	# rs = 0.74
+2*sin((pi*0.74)/6)								# rp = 0.76
+0.5*log((1 + 0.76)/(1 - 0.76))					# zr = 1.00
+1/(6-3)										# var = 0.333
+
+Independent groups: yes, the effect size is based on one time point
+
+Within-group changes:
+“Sizes of groups fluctuated with no corresponding change in size of home range”
+no change in home range size when group size changed, but then gives examples of when it does!
+“A new group that appeared at Boningar expanded its home range from 2.1 to 12.7 hectares in nine months but itself only increased in size from two to three birds. Another new group fluctuated between three and four birds for twenty-three months while its home range changed from 1.7 to only 5.5 hectares.”
++ group A increased in size from 2 to 3 and it’s home range changed from 2.1 to 12.7 hectares
++ group B decreased in size from 4 to 3 and it’s home range changed from 5.5 to 1.7 hectares
+Take ‘fluctuated’ to mean decreased
+
+Territorial disputes: yes "Groups were strongly territorial and spent much time in disputes with neighbouring groups." and "Chasing between groups occurred during territorial disputes" and "When two groups met, a dispute took place, each group huddling in view of the other, usually on an open perch above the ground."
+
+Notes:
+- used July values for group size (breeding between June and February), so should be adults
+- used July values for home range size
+- mean home range size = 22.9 ha, range = 6.7 - 52.7 ha (from Table 9)
+- mean home range size = 18.8 ha, range = 1.7 - 52.7 ha (from Table 8)
+- group size range = 3 - 9 (see 'Structure of groups' results section)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### GROOVE-BILLED ANI ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Habitat saturation in groove-billed anis (Crotophaga sulcirostris)
+Authors: Koford, R.R. and Bowen, B.S. and Vehrencamp, S.L.
+Journal: American Naturalist
+Year: 1986
+Study location: Guanacaste Province, Costa Rica
+Study duration: 1978 to 1982
+
+Data from: Table 1 has correlations (Pearson’s) between unit size and 12 habitat quality measures
+unit size vs territory area: rp = 0.20
+0.5*log((1 + 0.20)/(1 - 0.20))	# zr = 0.20
+1/(22-3)	# var = 0.053
+N = 107 unit years but used N = 22 (i.e. the minimum number of territories in the study years)
+
+Independent groups: unclear, no since unit years, but then says also says: variables for each territory were used only once unless the variables changed in a subsequent year; used N = 22 for sampling variance to be conservative
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: nothing mentioned
+
+Notes:
+- unit size = number of breeders in a breeding unit
+- study dates seem to be within the breeding season
+- the number of territories in the study years = 22, 26, 27, 26, 26
+- mean territory area = 3.3 ha (Table 2)
+- group size range = 2 - 8 ("breed either in pairs or in groups of up to four monogamously mated pairs")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+								### LAUGHING KOOKABURRA ###
+
+## three studies with data on territory area and group size from three populations ##
+
+Title: The effect of helpers on reproductive success the laughing kookaburra
+Authors: Legge, S.
+Journal: Journal of Animal Ecology
+Year: 2000
+Study location: near Canberra, Australia
+Study duration: 1994 to 1998
+
+Data from: Figure 1 and F statistic of group size vs territory size reported in the results
+“Territory size was positively correlated with group size (F1,29 = 204, P < 0.001, r2 = 0.8; Fig. 1).”
+R^2 = 0.80
+r = sqrt(0.80) = 0.89
+0.5*log((1 + 0.89)/(1 - 0.89))		# zr = 1.42
+1/(30-3)							# var = 0.04
+N = 30 from Figure 1
+
+Independent groups: yes, data all from the same month in the same year, so each group only included once
+
+Within-group changes:
+group boundaries did not appear to shift conspicuously BUT don't know if group sizes changed
+
+Territorial disputes: yes "They also vigorously help to defend the group territory, which is maintained all year" and "Group territorial displays marked the position of each group's territory boundaries" and "Intruders are aggressively repelled, the borders with neighbours are patrolled during ritualized displays, and groups regularly chorus from roost sites at dawn and dusk"
+
+Notes:
+- Fig 1 data from September 1997 (onset of breeding), so should be adults adults
+- Clutches were laid in the austral spring (September - December)
+- mean territory size = 69 ha, range = 16 - 224 ha
+- group size range = 2 - 8 ("live in co-operatively breeding groups of two to eight birds")
+
+
+Title: The auxiliary social system and its effect on territory and breeding in kookaburras
+Authors: Parry, V.
+Journal: Emu
+Year: 1973
+Study location: Sherbrooke Forest, Belgrave, Victoria, Australia
+Study duration: 1965 to 1967
+
+Data from: Table 3 has data which can use to estimate distributions
+I took the range and mean to get estimates for group sizes 2 to 4, the ranges for group size 5, and there was only one estimate for group size 6
+## in R ##
+data <- data.frame(group_size = c(2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 6),
+		terr_size = c(20250, 25110, 34425, 32400, 42930, 59940, 34425, 63180, 99225, 68850, 74115, 72900))
+plot(group_size ~ terr_size, data)
+cor.test(data$group_size, data$terr_size, method="spearman")		# rs = 0.82
+2*sin((pi*0.82)/6)											# rp = 0.83
+0.5*log((1 + 0.83)/(1 - 0.83))								# zr = 1.19
+1/(9-3)													# var = 0.167
+Nine territories were known in 1965 (Fig. 1) and thirteen in 1966 (Fig. 2)
+
+Independent groups: data in Table 3 may be pseudo-replicated, so used N = 9 (the number in 1965) to be conservative
+
+Within-group changes: Table 4 has data for five groups
++ group C decreased in size from 4 to 2 and it’s home range changed from 66825 to 27540 m2
++ group B decreased in size from 4 to 3 and it’s home range changed from 99225 to 43740 m2
++ group F increased in size from 3 to 5 and it’s home range changed from 34425 to 74115 m2
++ group H increased in size from 4 to 6 and it’s home range changed from 34424 to 72900 m2
++ group D increased in size from 3 to 5 and it’s home range changed from 32400 to 68850 m2
+
+Territorial disputes: yes "Adjustments, if any, were made during July and August when some Kookaburras wandered and defence of territory was at its peak" and "Boundaries between neighbouring groups were easily determined because displays took place along them" and "intruders are not tolerated in the territory"
+
+Notes:
+- territory and group size measured in August, before breeding (September), so should be adults
+- mean territory size = 5.2 ha, range = 2 - 7.3 ha (Table 3)
+- group size range = 2 - 6 (see 'Social structure' results section)
+
+
+Title: Helpers have little to laugh about: group structure and vocalisation in the laughing kookaburra Dacelo novaeguineae
+Authors: Reyer, H.U. and Schimdl, D.
+Journal: Emu
+Year: 1988
+Study location: Armidale, New South Wales, Australia
+Study duration: 1983
+
+Data from: Figure 1 has raw data and Spearman's r reported in the results
+“Territory size, measured for only nine of our 16 groups, correlated positively with group size (Fig. 1; rs = 0.73, n = 9, P < 0.05; Spearman rank correlation, 2-tailed).”
+2*sin((pi*0.73)/6)					# rp = 0.75
+0.5*log((1 + 0.75)/(1 - 0.75))		# zr = 0.97
+1/(9 -3)							# var = 0.16
+
+Independent groups: yes since each group analysed once
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: yes "singing was usually connected with inter- and intra-group disputes. We conclude that the Kookaburras's laugh song signals aggression and aids in (a) defending a territory, (b) guarding the mate and (c) establishing and maintaining a dominance hierarchy between breeders and helpers."
+
+Notes:
+- study occurred between September and August which is the start of the breeding season, so should be adults
+- mean territory size = 25.4 ha, range = 5.1 - 43.9 ha (Fig 1)
+- group size range = 2 - 5 (see 'Group size and territory size' results section)
+
+
+## Pool Effect Sizes ##
+- Legge Zr = 1.42, N = 30
+- Parry Zr = 1.19, N = 9
+- Reyer & Schimdl Zr = 0.97, N = 9
+- weighted mean effect size:
+((1.42 * 30) + (1.19 * 9) + (0.97 * 9)) / (30+9+9) = 1.29
+- combine N since different populations 30+9+9 = 48
+var = 1/(48-3) = 0.022
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### PURPLE GALLINULE ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Group territoriality and plural breeding in the Purple Gallinule (Porphyrula martinica) in a seasonally flooded savanna in Venezuela
+Authors: Tárano, Zaida
+Journal: Ornitologia Neotropical
+Year: 2008
+Study location: Fundo Pecuario Masaguaral, Guárico State, Venezuela
+Study duration: one wet season (not sure which year)
+
+Data from: Table 1 has raw data and Spearman's r reported in results
+
+Results:
+“There was a positive relationship between group size and territory size (Spearman rs = 0.63, P = 0.029). The relationship was strongly influenced by C1; however, the relationship remained significant when C1 was removed (Spearman rs = 0.52, P = 0.05).”
+Used the latter correlation to be conservative.
+2*sin((pi*0.52)/6)					# rp = 0.54
+0.5*log((1 + 0.54)/(1 - 0.54))		# zr = 0.60
+1/(12-3)							# var = 0.111
+N = 13 (Table 1) but reduced to 12 because C1 excluded
+
+Independent groups: yes since each group analysed once
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: yes "... suggests that all group members share defense duties" and "Both
+breeding and non-breeding individuals participated in territorial defense"
+
+Notes:
+- groups comprise adults
+- field work during wet season = June – November (reproduction starts May / June and ends in December)
+- mean territory size = 0.09 ha, range = 0.06 - 0.2 ha
+- group size range = 2 - 9 (4 if exclude C1)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### V, S, AND R-B FAIRYWRENS ###
+
+## one study with data on territory area and group size for three species ##
+
+Title: Relationship between bird-unit size and territory quality in three species of fairy-wrens (Malurus spp.) with overlapping territories
+Authors: Chan, K and Augusteyn, JD
+Journal: Ecological Research
+Year: 2003
+Study location: Taunton National Park, Queensland, Australia
+Study duration: 1997 to 1998
+
+Data from: Figure 3 has raw data and Spearman's r reported in results
+Not possible to get correlations for specific habitat variables since these estimated from a ‘best’ model
+N red-backed = 21 (-2 which whose territories were not accurately measured)
+N superb = 9
+N variegated = 10 
+
+“Territory size increased with unit size for variegated fairy-wrens (rs = 0.697, P < 0.05), but not for superb (rs = 0.492, P > 0.05) and red-backed fairy-wrens (rs = 0.427, P > 0.05, Fig. 3)”
+
+variegated:
+2*sin((pi*0.697)/6)				# rp = 0.71
+0.5*log((1 + 0.71)/(1 - 0.71))		# zr = 0.89
+1/(10-3)							# var = 0.143
+
+superb:
+2*sin((pi*0.492)/6)				# rp = 0.51
+0.5*log((1 + 0.51)/(1 - 0.51))		# zr = 0.56
+1/(9-3)							# var = 0.17
+
+red-backed:
+2*sin((pi*0.427)/6)				# rp = 0.44
+0.5*log((1 + 0.44)/(1 - 0.44))		# zr = 0.47
+1/(21-3)							# var = 0.056
+
+Independent groups: yes since data are from one breeding season
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: yes, "Aggressive interactions between bird units were uncommon and the intrusion of neighbors was often tolerated. However, bird groups did use a repertoire of calls during the breeding season in defense of their territories."
+
+Notes:
+- unit / group = the number of adults that intermingle on a daily basis during the breeding season
+- variegated mean territory size = 7.3 ha, range = 4 - 19 ha (Table 2, Fig 3)
+- superb mean territory size = 8.6 ha, range = 4 - 16 ha (Table 2, Fig 3)
+- red-backed mean territory size = 5.4 ha, range = 2 - 12 ha (Table 2, Fig 3)
+- variegated group size range = 2 - 10 (see 'Body mass, territory size and unit size' results section)
+- superb group size range = 2 - 5 (see 'Body mass, territory size and unit size' results section)
+- red-backed group size range = 2 - 8 (see 'Body mass, territory size and unit size' results section)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### RED-COCKADED WOODPECKER ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Defining quality of red-cockaded woodpecker foraging habitat based on habitat use and fitness
+Authors: Walters, J.R. and Daniels, S.J. and Carter III, J.H. and Doerr, P.D.
+Journal: Journal of Wildlife Management
+Year: 2002
+Study location: Sandhills of south-central North Carolina, USA
+Study duration: 1985 to 1998
+
+Data from: Figure 5c = group size ~ size of home range (ha)
+Data in table 5 from multiple regressions so not usable and overlaps with that from Figure 5a
+
+## in R ##
+# group size ~ home range size (ha)
+data <- read.csv("Desktop/bird_projects/BLC/data/raw/Walters_et_al_5c.csv")
+data <- round(data, 1)			# 30 rows, each a unique group
+plot(group_size ~ home_range, data)
+cor.test(data$group_size, data$home_range, method="spearman")	# rs = 0.28
+2*sin((pi*0.28)/6)											# rp = 0.29
+0.5*log((1 + 0.29)/(1 - 0.29))								# zr = 0.30
+1/(30-3)													# var = 0.037
+	
+Independent groups: Yes, since N = 30 groups studied (see below)
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: nothing mentioned
+
+Notes:
+- “Each breeding season, reproduction of each group has been monitored and all adult group members identified by color band.”
+- calculated year-round home ranges
+- “We selected 30 groups from the larger study population for intensive study”
+- mean territory area = 83.6 ha, range = 56.3 - 128.7 ha (Kernel method)
+- group size range = 2 - 4
+- group size range = 2 - 7 ("Red-cockaded woodpecker groups consist of a single breeding pair and up to five nonbreeding helpers" in Chapter 4 in 2016 Cooperative Breeding in Vertebrates book)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### RUFOUS TREECREEPER ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Determining habitat quality for the cooperatively breeding Rufous Treecreeper, Climacteris rufa
+Authors: Luck, GW
+Journal: Austral Ecology
+Year: 2002
+Study location: Dryandra Woodland, near Perth, Australia
+Study duration: 1997 to 2000
+
+Data from: Table 2 has Spearman's r for group size and territory quality and territory size and Table 5 has correlations between the individual habitat characteristics that contributed to the measure of territory quality
+Table 2 group size vs territory size 		# rs = 0.157
+2*sin((pi*0.157)/6)					# rp = 0.164
+0.5*log((1 + 0.16)/(1 - 0.16))			# zr = 0.16
+1/(30-3)								# var = 0.037
+N = 30 territories monitored
+
+Independent groups: yes since N = 30 territories studied
+
+Within-group changes:
+territory and boundary sharing mean little opportunity for changes in territory size BUT don't know if group sizes changed
+
+Territorial disputes: no "individuals in one territory may provision nestlings in adjacent territories (cross-territorial provisioning)." and nothing further mentioned
+
+Notes:
+- “Group size: the number of adult birds in a territory at the beginning of each breeding season”
+- mean territory size = 2.6 ha, range = 1.6 - 6.0 ha (from Luck 2001)
+- group size range = 2 - 7 ("group size ranged from two to seven individuals" in Luck 2001 Aus J Zool)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+								### RUFOUS VANGA ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Group composition and contributions to breeding by rufous vangas Schetba rufa in Madagascar
+Authors: Yamagishi, S, Urano, E and Eguchi K
+Journal: Ibis
+Year: 1995
+Study location: Botanical Garden A, Ampijoroa Forest Reserve, Madagascar
+Study duration: 1991 to 1992
+
+Data from: Figure 2 has complete territory size for 6 groups, Table 2 has group sizes
+Area of territory (m^2) from Figure 2 using imageJ
+Only territories with compete boundaries included
+B = 30751
+H = 36345
+E = 33666
+I = 29175
+K = 11800
+F = 9686
+Group sizes from Table 2
+B = 3
+H = 3
+E = 2
+I = 2
+K = 2
+F = 2
+## in R ##
+data <- data.frame(group_ID = c("B", "H", "E", "I", "K", "F"),
+		all_group_size = c(3, 3, 2, 2, 2, 2),
+		adult_group_size = c(2, 2, 2, 2, 2, 2),
+		area = c(30751, 36345, 33666, 29175, 11800, 9686))		
+# area (m^2)
+plot(all_group_size ~ area, data)
+cor.test(data$all_group_size, data$area, method="spearman")		# rs = 0.62
+2*sin((pi*0.62)/6)										# rp = 0.64
+0.5*log((1 + 0.64)/(1 - 0.64))							# zr = 0.76
+1/(6-3)												# var = 0.333
+
+Independent groups: yes since each group analysed once
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: yes "All group members appeared to defend the territory" and "confrontations
+between two groups were observed only at the periphery of their home ranges" and "Birds with spotted throats also seemed to participate in defending the territory by joining in confrontations with other groups"
+
+Notes:
+- “Our study concentrated on the breeding season”
+- spotted birds (SB) included in some groups - may be immature males but no information about the sex or age of spotted birds in the literature
+- mean territory size = 2.5 ha, range = 1.0 - 3.6 ha (based on Fig 2 data)
+- group size range = 2 - 4 ("lived in groups of two to four individuals")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+								### SEYCHELLES WARBLER ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: The role of group size and environmental factors on survival in a cooperatively breeding tropical passerine
+Authors: Brouwer, L. and Richardson, D.S. and Eikenaar, C. and Komdeur, J.
+Journal: Journal of Animal Ecology
+Year: 2006
+Study location: Cousin Island, Seychelles
+Study duration: 1987, 1990, 1996-99 and 2003-04.
+
+Data from: methods has summary data on number of individuals and average territory size
+“For 4 years for which accurate territory sizes were available, the average territory size (in ha + SE) per group size was as follows: group size = 1: 0.16 +/- 0.04 (n = 6); group size 2: 0.22  +/- 0.01 (n = 229); group size = 3: 0.23  +/- 0.01 (n = 142); group size = 4: 0.25  +/- 0.01 (n = 43); group size = 5: 0.27 +/- 0.05 (n = 8); group size = 6: 0.27  +/- 0.03 (n = 3)”
+
+Assign N based on % groups and 110 territories, otherwise end up with pseudo-replicated data and negative territory sizes
+
+N groups = 229 + 142 + 43 + 8 + 3 = 425
+- 229/425 = 0.539; 0.539 * 110 = 59
+- 142/425 = 0.334; 0.334 * 110 = 37
+- 43/425 = 0.101; 0.101 * 110 = 11
+- 8/425 = 0.019; 0.019 * 110 = 2
+- 3/425 = 0.007; 0.007 * 110 = 1
+59 + 37 + 11 + 2 + 1 = 110 
+
+# pairs: 0.22  +/- 0.01 (n = 229, use 59)
+0.01*sqrt(59) 	# sd = 0.077
+pairs <- rnorm(n=59, mean=0.22, sd=0.077)
+mean(pairs)
+sd(pairs)
+
+# threes: 0.23  +/- 0.01 (n = 142, use 37)
+0.01*sqrt(37)	# sd = 0.061
+threes <- rnorm(n=37, mean=0.23, sd=0.061)
+mean(threes)
+sd(threes)
+
+# fours: 0.25  +/- 0.01 (n = 43, use 11)
+0.01*sqrt(11)	# sd = 0.033
+fours <- rnorm(n=11, mean=0.25, sd=0.033)
+mean(fours)
+sd(fours)
+
+# fives: 0.27 +/- 0.05 (n = 8, use n = 2)
+0.05*sqrt(2)	# sd = 0.071
+fives <- rnorm(n=2, mean=0.27, sd=0.071)
+mean(fives)
+sd(fives)
+
+# sixes: 0.27  +/- 0.03 (n = 3, use n = 1)
+sixes <- 0.27
+
+full_data <- data.frame(group_size = c(rep(2, 59), rep(3, 37), rep(4, 11), rep(5, 2), rep(6, 1)), terr_size = c(pairs, threes, fours, fives, sixes))
+plot(group_size ~ terr_size, full_data)
+cor.test(full_data$group_size, full_data$terr_size, method="spearman")	# rs = 0.24
+0.5*log((1 + 0.24)/(1 - 0.24))									# zr = 0.25
+1/(110-3)													# var = 0.009
+
+Independent groups: the data above is pseudo-replicated since group year data reported (N = 116), so used N = 110 (see below) for the sampling variance to reflect this
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: nothing mentioned
+
+Notes:
+- group sizes varying from one to six birds per territory - assume adults based on other papers but not explicitely stated
+- data collected during the main breeding season
+- the number of territories is relatively constant across years: mean = 112.3
+- from 2016 coop breeding book, “since 1982 has been at a carrying capacity of about 320 adults inhabiting around 110 territories that cover all but the bare rock areas of Cousin”
+- mean = 0.25, range = 0.22 - 0.27 ha (based on the means reported above)
+- group size range = 2 - 6 ("group sizes varying from one to six birds per territory")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+								### STRIPE-BACKED WREN ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Cooperative enhancement of reproductive success in tropical wren societies
+Authors: Rabenold, KN
+Journal: Ecology
+Year: 1984
+Study location: Hato Masaguaral, Venezuela
+Study duration: 1976 to 1981
+
+Data from: Figure 2 shows territory sizes for 31 groups and Figure 4 has average group sizes for 26 groups
+Area of territory (m^2) from Figure 2 using imageJ
+## in R ##
+data <- read.csv("Desktop/bird_projects/BLC/data/raw/Rabenold_1984.csv")
+plot(size ~ area, data)
+cor.test(data$size, data$area, method="spearman")		# rs = 0.68
+2*sin((pi*0.68)/6)									# rp = 0.70
+0.5*log((1 + 0.70)/(1 - 0.70))						# zr = 0.87
+1/(26-3)											# var = 0.044
+
+Independent groups: yes since mean group size based on 5 year averages
+
+Within-group changes:
+“territory boundaries changed little except when neighbouring groups’ relative sizes changed dramatically”
+
+Territorial disputes: yes "all members share in defense of the common territory" and "All members of a group participate in repelling intruders" [assume this includes conspecifics]
+
+Notes:
+- Group size in figure 4 is mean number of adults at the start of breeding, based on 5-year averages
+- 5 year study of a completely marked population of 25-30 groups in the Venezuelan savanna
+- year-round territories with highly traditional boundaries
+- mean territory area = 1.9, range = 0.2 - 5.0 ha (from Fig 2 data)
+- group size range = 2 - 14 ("ranging from 2 to 14 members")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+								### SUBDESERT MESITE ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Group living, breeding behaviour and territoriality in the Subdesert Mesite Monias benschi
+Authors: Seddon, N and Tobias, JA and Butchart, SHM
+Journal: Ibis
+Year: 2003
+Study location: Mike Forest, Madagascar
+Study duration: 1997 to 2000
+
+Data from: Figure 4 and Spearman's r reported in the results
+“There were no significant correlations between territory size and the number of adults in the group for the seven groups for which we collected sufficient registrations in 1999–2000, whether using 100% MCPs: rs = 0.24, P = 0.55; 95% MCPs: rs = 0.72, P = 0.13; Spearman rank correlations, n = 7”
+Used 95% MCP as this appears to be the convention since 100% heavily influenced by outliers
+2*sin((pi*0.72)/6)				# rp = 0.74
+0.5*log((1 + 0.74)/(1 - 0.74))	# zr = 0.95
+1/(7-3)						# var = 0.250
+
+
+Independent groups? yes since data from one breeding season
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: yes "all group members contributed to territory defence" and "All mesites occupying a territory helped to defend it, with adults apparently defending against same-sex intruder" and "when groups finished singing there were short scurrying chases and the intruders retreated irrespective of their relative group size. When intruders did not retreat the interaction escalated into prolonged running song contests and fights between opposing birds"
+
+Notes:
+- group = number of adults (see above)
+- breeding occurred throughout the year
+- mean territory size = 12.09 ha, range = 5.59 - 18.8 ha (Table 4, 95% MCP column)
+- group size range = 2 - 9 ("groups of two to nine birds")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### SUPERB FAIRYWREN ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Territory quality and group size in the superb fairy-wren Malurus cyaneus
+Authors: Nias, RC
+Journal: Emu
+Year: 1984
+Study location: Eastwood State Forest near Armidale, New South Wales, Australia
+Study duration: 1982 to 1983
+
+Data from: Table 1 has Person's r for group size and 10 territory quality variables
+N = 19 social units
+TAREA: rp = -0.47
+0.5*log((1 + -0.47)/(1 - -0.47)) 	# zr = -0.51
+1/(19-3)							# var = 0.06
+
+Independent groups: yes since data are from one breeding season
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: yes "The boundaries of territories were further defined from observations of territorial disputes between neighbouring groups."
+
+Notes:
+- group size = max number of adult birds (those at least one year old) occupying a territory during the breeding season
+- mean territory size = 1.46 ha, range = 0.83 - 2.55 ha
+- group size range = 2 - 7 (Figure 1)
+
+
+## Pool Effect Sizes ##
+- Nias Zr = -0.51, N = 19
+- Chan & Augusteyn Zr = 0.56, N = 9
+- weighted mean effect size:
+((-0.51 * 19) + (0.56 * 9)) / (19+9) = -0.17
+- combine N since different populations 19+9 = 28
+var = 1/(28-3) = 0.040
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### TAIWAN YUHINA ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Habitat selection of the cooperative breeding Taiwan Yuhina (Yuhina brunneiceps) in a fragmented forest habitat
+Authors: Lee, PF and Shen, SF and Ding, TS and Chiou, CR and Yuan, HW
+Journal: Zoological Studies
+Year: 2005
+Study location: Meifeng Highlands Experiment Farm, Taiwan
+Study duration: 1998 to 2001
+
+Data from: Spearman's r reported in the results
+“Larger groups used larger home range areas (rs = 0.684, p < 0.01). However, the area per capita did not differ across groups (0.53 ± 0.27ha, rs = 0.077, p = 0.234).”
+2*sin((pi*0.684)/6)				# rp = 0.701
+0.5*log((1 + 0.701)/(1 - 0.701))		# zr = 0.87
+1/(13-3)							# var = 0.100
+“only 13 groups had home ranges completely within the study site”
+
+Independent groups: yes since data on home range size are from one breeding season
+
+Within-group changes: nothing mentioned
+
+Territorial disputes: no "Most of the breeding groups had home ranges which greatly overlapped those of other groups"
+
+Notes:
+- the area of the 95% kernel home range of the breeding groups was 2.3 ± 2.0 ha (Fig. 4)
+- since breeding groups studied, should be adults only
+- study site not a National Park
+- mean territory size = 2.3 ha
+- group size range = 2 - 7 ("Breeding groups include 2-7 individuals")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### WHITE-BANDED TANAGER ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Territorial system and adult dispersal in a cooperative-breeding tanager
+Authors: Duca, Charles and Marini, Miguel Angelo
+Journal: Auk
+Year: 2014
+Study location: Estação Ecológica de Águas Emendadas, Distrito Federal, Brazil
+Study duration: 2003 to 2006
+
+Data from: Figure 1 is a map of territories and Figure 3 has raw data
+“There was a positive relation between territory size and group size (linear regression: r2 = 0.362, P = 0.001; Figure 3).”
+N = 30 territories from Fig 1
+R^2 = 0.362
+rp = sqrt(0.362) = 0.60
+0.5*log((1 + 0.60)/(1 - 0.60))		# zr = 0.69
+1/(30-3)							# var = 0.037
+
+Independent groups: yes since N = 30 different groups
+
+Within-group changes:
+“Most territories of White-banded Tanagers remained with their same boundaries over time, regardless of turnover among individuals in the group”
+assume 'turnover' to mean changes to be conservative but could be that group sizes remained the same
+
+Territorial disputes: yes "Territories had small overlapping areas [border-disputed areas], and intrusions into the neighboring territories beyond the limits of overlap were not recorded" and "Once the individuals of a group perceived the presence of a neighboring group, they started agonistic behaviors that always ended with individuals of both groups leaving the area of overlap" and "individuals vocalized intensely and flew from one perch to another many times, but physical aggression among individuals of different groups was rare"
+
+
+Notes:
+- “The size of the groups at the end of breeding seasons was estimated without fledglings born in that season because they did not participate in territory defense when the group settled there at the start of the breeding season.”
+- territory measured in breeding (August to December) and non-breeding season
+- mean territory size (breeding season) = 3.8 ha, range = 2.1 - 5.3 ha (from data in Fig 3)
+- group size range = 2 - 8 ("groups of 2–8 individuals")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### WHITE-BROWED SPARROW-WEAVER ###
+
+## one study with data on territory area and group size from one population ##
+## data from Martin-Taylor 2018 excluded as identical to this ##
+
+Title: Social Effects on Adult Survival in a Wild Cooperative Bird
+Authors: O'Callaghan, Olivia
+Journal: MSc Thesis, Masters by Research in Biological Sciences, University of Exeter
+Year: 2021
+Study location: Tswalu Kalahari Reserve, South Africa
+Study duration: 2012 to 2015
+
+Data from: Figure 3b has raw data
+territory size normalised for analysis using a square-root transformation
+According to the figure legend: dots represent the raw data and points have been jittered on the x axis
+## in R ##
+data <- read.csv("Desktop/bird_projects/BLC/data/raw/OCallaghan_2021.csv")		# 66 rows by 2 columns
+data$group_size <- round(data$group_size, 0)
+data$terr_size <- round(data$terr_size, 1)
+plot(terr_size ~ group_size,  data)
+cor.test(data$group_size, data$terr_size, method="spearman")		# rs = 0.36
+2*sin((pi*0.36)/6)											# rp = 0.38
+0.5*log((1 + 0.38)/(1 - 0.38))								# zr = 0.40
+1/(34-3)													# var = 0.032
+
+Independent groups: yes since N = 34 which is the number of unique groups studied
+
+Within-group changes:
+no support for an effect of within-territory variation in group size (Δ group size) on territory size
+statistical analysis but at odds with the Martin-Taylor conclusion
+Figure 3e has raw data but not clear if Territory size is change in territory size?
+
+Territorial disputes: yes "Social groups are easily distinguished as they engage in activities such as foraging and territory defence together" and "helpers are substantially less likely than dominants to contribute to the first wave of response in inter-group conflict (when the risks are likely to be lower; York et al., 2019)"
+
+Notes:
+- group size seems to be adults only since extra group members referred to as helpers
+- N = 82 territory size measures for 34 groups across three breeding seasons
+- mean territory size = 1.24 ha, range = 0.2 - 3.1 ha (from data in Fig 3b)
+- group size range = 2 - 14 ("dominant pairs are assisted by 0-12 non-breeding subordinate ‘helpers’")
+- group size range = 2 - 12 ("O to 10 nonbreeding subordinates" in Capilla-Lasheras 2021 Sci Adv paper)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### WHITE-BROWED TREECREEPER ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Breeding biology, adult survival and territoriality of the White-browed Treecreeper (Climacteris affinis) in north-west Victoria, Australia
+Authors: Radford, J.Q.
+Journal: Emu
+Year: 2004
+Species: white-browed treecreeper
+Study location: Yarrara Flora and Fauna Reserve, Victoria, Australia
+Study duration: 1998 to 2000
+
+Data from: Table 1 has raw data and Spearman's r reported in results
+“Territory size (95% minimum convex polygons) was positively correlated with group size, calculated as the mean number of adults present in 1998 and 1999 (Spearman’s r = 0.803, n = 12, P < 0.01).”
+2*sin((pi*0.80)/6)					# rp = 0.81
+0.5*log((1 + 0.81)/(1 - 0.81))			# zr = 1.13
+1/(12-3)							# var = 0.111
+
+Note that:
+“When the influence of number of position fixes was controlled in partial regression, the relationship between territory size and group size was not significant (partial correlation coefficient = 0.269, n = 12, P = 0.424).”
+
+Independent groups: yes, since average group size used and each group only analysed once
+
+Within-group changes: "there was no evidence of territory contraction or expansion following changes in group size. The breeding units in territories T1, T11 and T12 (see Fig. 4) occupied similar areas after they grew from pairs to trios."
+
+Territorial disputes: yes "Habitat use was not exclusive, with some overlap between neighbouring territories, and individuals occasionally made forays deep into adjacent territories (Fig. 4). Territorial disputes involved complex displays in which combatants faced each other on a trunk or branch separated by 50 cm to several metres. The participants advanced towards each other with feathers ruffled, heads bobbing up and down, tails fanned and elevated, and wings flicking. Disputes were usually resolved without physical contact but ‘dive-bombing’ and aerial pursuits were observed on several occasions."
+
+Notes:
+- group size = mean of adults present in 1998 and 1999 (see above)
+- no evidence that territory borders were relaxed during the non-breeding season
+- mean territory size = 8.4 ha, range = 6.6 - 11.2 ha
+- group size range = 2 - 5 ("usually only one, but up to three, male helpers present in a moderate fraction (35%) of breeding units")
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+							### WHITE-THROATED MAGPIE-JAY ###
+
+## one study with data on territory area and group size from one population ##
+
+Title: Ecological factors affecting group and territory size in White-throated Magpie-Jays
+Authors: Langen, TA and Vehrencamp, SL
+Journal: Auk
+Year: 1998
+Study location: Santa Rosa National Park, Guanacaste Conservation Area, Costa Rica
+Study duration: 1991 to 1993
+
+Data from: Table 1 has raw data; Table 2 has correlations (assume Pearsons since methods say parametric tests used)
+Table 2: group size vs area rp = 0.598
+0.5*log((1 + 0.598)/(1 - 0.598))		# zr =  0.69
+1/(14-3)							# var = 0.091
+N = 14 groups over a three-year period in Costa Rica
+
+Independent groups: yes since each group included once in analyses
+
+Within-group changes: “We did not detect any shifts in territory boundaries among the 14 groups over three years” AND “group size fluctuated slightly from year to year with the death, dispersal, or recruitment of group members but was consistently large or small for a given territory.“
+
+Territorial disputes: yes "defend permanent, all-purpose group territories" and "boundary disputes involve all nearby group members" and "Territory boundaries were inferred from daily ranging patterns and frequent disputes with adjacent groups. Territories usually overlapped by less than 50 m."
+
+Notes:
+- “Group size was calculated as the number of birds more than one year of age that were permanent residents within a territory“ (across seasons)
+- territories measured in June to August 1992 (N = 7) and June to August 1993 (N = 7)
+- breeding season = February to July
+- mean territory size = 18.7 ha, range = 10.6 - 30.5 ha (Table 1 data)
+- group size range = 2 - 10 (Table 1)
+
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
